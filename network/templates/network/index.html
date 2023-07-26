@@ -1,5 +1,17 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    <h1>All Posts</h1>
+    <br>
+
+    <div class="container border rounded" >
+        <br><form class="" method="post", action= {% url 'new_post' %}>
+            {% csrf_token %}
+            <h3>New Post</h3>
+            <textarea class="form-control" id="new_post_text" name="new_post_text" rows="3"></textarea>
+            <br>
+            <input type="hidden" name="user_id" value="{{ user.id }}"/>
+            <button class="btn btn-primary" id="submit_post">Submit</button>
+        </form><br>
+    </div>
 {% endblock %}
