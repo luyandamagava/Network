@@ -10,8 +10,43 @@
             <h3>New Post</h3>
             <textarea class="form-control" id="new_post_text" name="new_post_text" rows="3"></textarea>
             <br>
-            <input type="hidden" name="user_id" value="{{ user.id }}"/>
             <button class="btn btn-primary" id="submit_post">Submit</button>
         </form><br>
     </div>
+    <br>
+
+    
+        {% for post in posts %}
+        <div class="container border rounded">
+            <br>  
+            <div class="row">
+                <div class="col-6">
+                    <h5>{{ post.creator }}</h5>
+                </div>
+                <div class="col-6">
+                    <h6>{{ post.timestamp }}</h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p>{{ post.content }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <button class="btn btn-primary" id="like_post">Like</button>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-primary" id="edit_post">Edit</button>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-primary" id="comment_post">Comment</button>
+                </div>
+            </div>
+            <br>    
+        </div>
+        <br>
+        {% endfor %}
+    
+    
 {% endblock %}
