@@ -4,12 +4,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Comment, Post#, follower, following
+from .models import User, Comment, Post
+from django.contrib import messages
 
 
 def index(request):
-    user = request.user
-    posts = user.creator_posts.all()
+    posts = Post.objects.all()
 
     return render(request, "network/index.html", {
         "posts": posts, 
@@ -75,3 +75,74 @@ def new_post(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/new_post.html")
+    
+def profile(request, user_id):
+
+                                                        # - here the signed in user is trying to view the profile of the profile user
+    profile_user = User.objects.get(pk=user_id)
+    posts = profile_user.creator_posts.all()            # The posts of the profile user
+    following = profile_user.following.all()            # The list of users objects that the profile user is following
+    followingNum = len(following)                       # The number of users that the profile user is following
+    followers = profile_user.followers.all()             # The list of user objects that are following the profile user
+    followersNum = len(followers)                       # The number of users that are following the profile user
+    followers_list = []
+
+    for follower in followers:
+        followers_list.append(follower.id)     # The list of user ids that are following the profile user
+    
+    return render(request, "network/profile.html", {
+        "profile_user": profile_user,
+        "posts": posts,
+        "following": following,
+        "followingNum": followingNum,
+        "followers": followers_list,
+        "followersNum": followersNum,
+        "logged_in_user": request.user
+    })
+
+def add_follower(request, user_id):
+                                                                        # here the signed in user is trying to follow the profile user
+    profile_user = User.objects.get(pk=user_id)                         # The user object you're trying to follow
+    profile_user_followers = profile_user.followers.all()               # The list of users that are following the user object you're trying to follow
+    logged_in_username = request.user
+    logged_in_user = User.objects.get(username=logged_in_username)      # The user object of the logged in user
+
+    if logged_in_user in profile_user_followers:                        # check if the logged in user is following the profile user
+        messages.error(request, 'You are already following this user!')
+        return HttpResponseRedirect(reverse("profile", args=(user_id,)))
+    
+    else:
+        profile_user.followers.add(logged_in_user)
+        logged_in_user.following.add(profile_user)
+        return HttpResponseRedirect(reverse("profile", args=(user_id,)))
+    
+def remove_follower(request, user_id):
+                                                                        # here the signed in user is trying to unfollow the profile user
+    profile_user = User.objects.get(pk=user_id)                         # The user object you're trying to unfollow
+    profile_user_followers = profile_user.followers.all()               # The list of users that are following the user object you're trying to unfollow
+    logged_in_username = request.user
+    logged_in_user = User.objects.get(username=logged_in_username)      # The user object of the logged in user
+
+    if logged_in_user not in profile_user_followers:                    # check if the logged in user is following the profile user
+        messages.error(request, 'You are not following this user!')
+        return HttpResponseRedirect(reverse("profile", args=(user_id,)))
+    
+    else:
+        profile_user.followers.remove(logged_in_user)
+        logged_in_user.following.remove(profile_user)
+        return HttpResponseRedirect(reverse("profile", args=(user_id,)))
+    
+def following(request):
+    logged_in_user = request.user
+    following = logged_in_user.following.all() # The list of users that the logged in user is following
+    follower_posts = []
+
+    for follow in following:
+        posts = follow.creator_posts.all()
+        for post in posts:
+            follower_posts.append(post)        
+
+    
+    return render(request, "network/following.html", {
+        "posts": follower_posts,
+    })

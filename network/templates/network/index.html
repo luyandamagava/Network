@@ -21,7 +21,7 @@
             <br>  
             <div class="row">
                 <div class="col-6">
-                    <h5>{{ post.creator }}</h5>
+                    <h5><a href="{% url 'profile' post.creator.id %}">{{ post.creator }}</a></h5>
                 </div>
                 <div class="col-6">
                     <h6>{{ post.timestamp }}</h6>

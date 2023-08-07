@@ -1,0 +1,73 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="container border rounded">
+        <h1>{{profile_user.username}}</h1>
+        <br>
+
+        <div>
+            <h3>Following: {{followingNum}}</h3>
+            <h3>Followers: {{followersNum}}</h3>
+        </div>
+        <br>
+        <div>
+        {% comment %} check if the signed up profile is not the same as the profile it is currently viewing {% endcomment %}
+        {% if  profile_user.username != user.username %}
+
+            {% comment %} check if the signed in user follows the current profile {% endcomment %}
+            {% if user.id in followers%}
+                <button class="btn btn-primary" id="Unfollow" onclick="location.href='{% url 'remove_follower' profile_user.id %}'">UnFollow</button>  
+
+                
+            {% else %}
+                <button class="btn btn-primary" id="follow" onclick="location.href='{% url 'add_follower' profile_user.id %}'">Follow</button>
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}  
+
+            {% endif %}
+        {% endif %}
+        </div>
+        <br>
+    </div>
+    <br>
+            
+
+    {% for post in posts %}
+    <div class="container border rounded">
+        <br>  
+        <div class="row">
+            <div class="col-6">
+                <h5>{{ post.creator }}</h5>
+            </div>
+            <div class="col-6">
+                <h6>{{ post.timestamp }}</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p>{{ post.content }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <button class="btn btn-primary" id="like_post">Like</button>
+            </div>
+            <div class="col-4">
+                <button class="btn btn-primary" id="edit_post">Edit</button>
+            </div>
+            <div class="col-4">
+                <button class="btn btn-primary" id="comment_post">Comment</button>
+            </div>
+        </div>
+        <br>    
+    </div>
+    <br>
+    {% endfor %}
+    
+    
+{% endblock %}
