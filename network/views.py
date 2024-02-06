@@ -6,13 +6,18 @@ from django.urls import reverse
 
 from .models import User, Comment, Post
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 
 def index(request):
     posts = Post.objects.all()
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
 
     return render(request, "network/index.html", {
-        "posts": posts, 
+        "posts": posts,
+        "page_obj": paginator.get_page(page_number)
+        
     })
 
 
