@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 
 def index(request):
     posts = Post.objects.all()
-    paginator = Paginator(posts, 2)
+    paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
 
     return render(request, "network/index.html", {
@@ -151,3 +151,14 @@ def following(request):
     return render(request, "network/following.html", {
         "posts": follower_posts,
     })
+
+def edit_post(request, post_id):        
+    post = Post.objects.get(pk=post_id)
+    if request.method == "POST":
+        post.content = request.POST["edit_post_text"]
+        post.save()
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "network/edit_post.html", {
+            "post": post
+        })

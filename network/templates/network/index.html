@@ -1,4 +1,6 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
 
 {% block body %}
     <h1>All Posts</h1>
@@ -16,8 +18,8 @@
     <br>
 
     
-        {% for post in posts %}
-        <div class="container border rounded">
+        {% for post in page_obj %}
+        <div class="container border rounded" data-data = "{{ user.id }}" id="object">
             <br>  
             <div class="row">
                 <div class="col-6">
@@ -29,45 +31,75 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <p>{{ post.content }}</p>
+                    <p id="content{{ post.creator.id }}">{{ post.content }}</p>
                 </div>
             </div>
-            <div class="row">
+
+            
+                {% if post.creator.id == user.id %}
+
+                    <form style="display:none" id="edit_post_form" method="post", action= {% url 'edit_post' post.id %}>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <textarea class="form-control" id="edit_post_text" name="edit_post_text">{{ post.content }}</textarea>
+                            </div>   
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-6">
+                                    <button class="btn btn-primary" type="submit" id="submit_edit_post">Submit</button>
+                            </div>
+                            <div class="col-6">
+                                    <button class="btn btn-primary" id="cancel_edit_post">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            
+
+            <br>
+
+            <div class="row" id="buttonsLCE{{ post.creator.id }}">
                 <div class="col-4">
                     <button class="btn btn-primary" id="like_post">Like</button>
                 </div>
-                <div class="col-4">
-                    <button class="btn btn-primary" id="edit_post">Edit</button>
-                </div>
+                
                 <div class="col-4">
                     <button class="btn btn-primary" id="comment_post">Comment</button>
                 </div>
+
+                {% if post.creator.id == user.id %}
+                <div class="col-4">
+                        <button class="btn btn-primary" id="edit_post">Edit</button>
+                </div>
+                {% endif %}
             </div>
+
             <br>    
         </div>
         <br>
         {% endfor %}
 
     <br>
-    <div class="container border rounded">
-        {{ page_obj }}
-        <br>
+    <br>
+    <div class="container">
         <hr>
-        <br>
+
         {% if page_obj.has_previous %}
-            <a href="?page=1">First</a>
+            <a href="?page=1">&laquo First</a>
             <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
         {% endif %}
 
-        {% if page_obj.has_next %}
-        
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+
+        {% if page_obj.has_next %}        
             <a href="?page={{ page_obj.next_page_number }}">Next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-
+            <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo</a>
         {% endif %}
-
+        <hr>
 
     </div>
-    
-    
+
+    <script src="{% static 'network/edit.js' %}"></script>
 {% endblock %}
