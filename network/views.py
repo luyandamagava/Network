@@ -162,3 +162,8 @@ def edit_post(request, post_id):
         return render(request, "network/edit_post.html", {
             "post": post
         })
+    
+    def add_like(request, post_id):
+        post = Post.objects.get(pk=post_id)
+        post.likes.add(request.user)
+        return HttpResponseRedirect(reverse("index"))
