@@ -61,9 +61,17 @@
             <br>
 
             <div class="row" id="buttonsLCE{{ post.id }}">
+                {% if user in post.likes.all %}
                 <div class="col-4">
-                    <button class="btn btn-primary" id="like_post">Like</button>
+                    <button class="btn btn-primary like_post" data-data = "{{ post.id }}" id="like_post{{ post.id }}">UnLike</button>
                 </div>
+
+                {% else %}
+                <div class="col-4">
+                    <button class="btn btn-primary like_post" data-data = "{{ post.id }}"id="like_post{{ post.id }}">Like</button>
+                </div>
+                {% endif %}
+                
                 
                 <div class="col-4">
                     <button class="btn btn-primary" id="comment_post">Comment</button>

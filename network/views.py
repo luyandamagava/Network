@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.http import JsonResponse
 
 from .models import User, Comment, Post
 from django.contrib import messages
@@ -16,7 +17,7 @@ def index(request):
 
     return render(request, "network/index.html", {
         "posts": posts,
-        "page_obj": paginator.get_page(page_number)
+        "page_obj": paginator.get_page(page_number),
         
     })
 
@@ -98,6 +99,7 @@ def profile(request, user_id):
     return render(request, "network/profile.html", {
         "profile_user": profile_user,
         "posts": posts,
+        "posts_likes": posts.likes.all(),
         "following": following,
         "followingNum": followingNum,
         "followers": followers_list,
@@ -163,7 +165,13 @@ def edit_post(request, post_id):
             "post": post
         })
     
-    def add_like(request, post_id):
-        post = Post.objects.get(pk=post_id)
-        post.likes.add(request.user)
-        return HttpResponseRedirect(reverse("index"))
+def like_post(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    logged_in_user = request.user
+    liked_posts = logged_in_user.liked_posts.all()
+    if not post in liked_posts:
+        post.likes.add(logged_in_user)
+        return JsonResponse({"message": "UnLike"})
+    else:    
+        post.likes.remove(logged_in_user)
+        return JsonResponse({"message": "Like"})
