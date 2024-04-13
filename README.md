@@ -65,7 +65,7 @@ Direct Messaging: Allow users to send private messages.
 Image and Video Uploads: Support multimedia sharing.
 Contact
 
-If you have questions, suggestions, or bug reports, please feel free to open an issue on the repository or contact me at [your email].
+If you have questions, suggestions, or bug reports, please feel free to open an issue on the repository or contact me at luyandamagava@gmail.com.
 
 Show Your Support
 
