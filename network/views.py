@@ -92,6 +92,8 @@ def profile(request, user_id):
     followers = profile_user.followers.all()             # The list of user objects that are following the profile user
     followersNum = len(followers)                       # The number of users that are following the profile user
     followers_list = []
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
 
     for follower in followers:
         followers_list.append(follower.id)     # The list of user ids that are following the profile user
@@ -99,7 +101,7 @@ def profile(request, user_id):
     return render(request, "network/profile.html", {
         "profile_user": profile_user,
         "posts": posts,
-        "posts_likes": posts.likes.all(),
+        "page_obj": paginator.get_page(page_number),
         "following": following,
         "followingNum": followingNum,
         "followers": followers_list,
@@ -143,15 +145,20 @@ def following(request):
     logged_in_user = request.user
     following = logged_in_user.following.all() # The list of users that the logged in user is following
     follower_posts = []
+    
 
     for follow in following:
         posts = follow.creator_posts.all()
         for post in posts:
-            follower_posts.append(post)        
+            follower_posts.append(post) 
+
+    paginator = Paginator(follower_posts, 10)
+    page_number = request.GET.get('page')       
 
     
     return render(request, "network/following.html", {
         "posts": follower_posts,
+        "page_obj": paginator.get_page(page_number),
     })
 
 def edit_post(request, post_id):        
@@ -169,9 +176,10 @@ def like_post(request, post_id):
     post = Post.objects.get(pk=post_id)
     logged_in_user = request.user
     liked_posts = logged_in_user.liked_posts.all()
+    like_post_num = len(liked_posts)
     if not post in liked_posts:
         post.likes.add(logged_in_user)
-        return JsonResponse({"message": "UnLike"})
+        return JsonResponse({"message": "&#10084;"})
     else:    
         post.likes.remove(logged_in_user)
-        return JsonResponse({"message": "Like"})
+        return JsonResponse({"message": "&#9825;"})

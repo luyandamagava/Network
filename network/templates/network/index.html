@@ -3,30 +3,34 @@
 
 
 {% block body %}
-    <h1>All Posts</h1>
+    <br>
+    <h1 class="text-5xl font-bold  ml-2">All Posts</h1>
     <br>
 
-    <div class="container border rounded" >
+    <div class="container rounded-xl " >
         <br><form class="" method="post", action= {% url 'new_post' %}>
             {% csrf_token %}
-            <h3>New Post</h3>
-            <textarea class="form-control" id="new_post_text" name="new_post_text" rows="3"></textarea>
+            <h3 class="text-center font-extrabold text-4xl">New Post</h3>
             <br>
-            <button class="btn btn-primary" id="submit_post">Submit</button>
+            <textarea class="form-control rounded-xl" id="new_post_text" name="new_post_text" rows="3"></textarea>
+            <br>
+            <button class="btn btn-danger btn-block rounded-lg transition ease-in-out delay-150 bg-black hover:-translate-y-1 hover:scale-110 hover:bg-blue-500 duration-300" id="submit_post">Submit</button>
         </form><br>
     </div>
     <br>
 
 
         {% for post in page_obj %}
-        <div class="container border rounded" data-data = "{{ post.id }}" id="object">
+        
+        <div class="container rounded-xl transition ease-in-out delay-150 bg-black hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 " data-data = "{{ post.id }}" id="object">
+            <hr>
             <br>  
             <div class="row">
                 <div class="col-6">
-                    <h5><a href="{% url 'profile' post.creator.id %}">{{ post.creator }}</a></h5>
+                    <h5 class="text-xl font-bold"><a href="{% url 'profile' post.creator.id %}">{{ post.creator }}</a></h5>
                 </div>
                 <div class="col-6">
-                    <h6>{{ post.timestamp }}</h6>
+                    <h6 class="text-xl font-bold">{{ post.timestamp }}</h6>
                 </div>
             </div>
             <div class="row">
@@ -42,16 +46,20 @@
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-12">
-                                <textarea class="form-control" id="edit_post_text" name="edit_post_text">{{ post.content }}</textarea>
+                                <textarea class="form-control " id="edit_post_text" name="edit_post_text">{{ post.content }}</textarea>
                             </div>   
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-6">
-                                    <button class="btn btn-primary" type="submit" id="submit_edit_post">Submit</button>
+                                    <button class="bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" type="submit" id="submit_edit_post">
+                                        Submit
+                                    </button>
                             </div>
                             <div class="col-6">
-                                    <button class="btn btn-primary cancel_edit_post" data-data = "{{ post.id }}" >Cancel</button>
+                                    <button class="cancel_edit_post bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}" >
+                                        Cancel
+                                    </button>
                             </div>
                         </div>
                     </form>
@@ -63,30 +71,40 @@
             <div class="row" id="buttonsLCE{{ post.id }}">
                 {% if user in post.likes.all %}
                 <div class="col-4">
-                    <button class="btn btn-primary like_post" data-data = "{{ post.id }}" id="like_post{{ post.id }}">UnLike</button>
+                    <button class="like_post  hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}" id="like_post{{ post.id }}">
+                        &#10084;
+                    </button>
                 </div>
 
                 {% else %}
                 <div class="col-4">
-                    <button class="btn btn-primary like_post" data-data = "{{ post.id }}"id="like_post{{ post.id }}">Like</button>
+                    <button class="like_post hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}"id="like_post{{ post.id }}">
+                        &#9825; 
+                    </button>
                 </div>
                 {% endif %}
                 
                 
                 <div class="col-4">
-                    <button class="btn btn-primary" id="comment_post">Comment</button>
+                    <button class=" bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" id="comment_post">
+                        Comment
+                    </button>
                 </div>
 
                 {% if post.creator.id == user.id %}
                 <div class="col-4">
-                        <button class="btn btn-primary edit_post" data-data = "{{ post.id }}">Edit</button>
+                        <button class="edit_post bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}">
+                            Edit
+                        </button>
                 </div>
                 {% endif %}
             </div>
 
-            <br>    
+            <br>
+            <hr>   
         </div>
         <br>
+        
         {% endfor %}
 
     <br>
