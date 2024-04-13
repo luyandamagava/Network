@@ -1,0 +1,130 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<br>
+    <div class="container border rounded-xl">
+        <br>
+        <h1 class="font-bold text-5xl rounded-xl">{{profile_user.username}}</h1>
+        <br>
+
+        <div>
+            <h3>Following: {{followingNum}}</h3>
+            <h3>Followers: {{followersNum}}</h3>
+        </div>
+        <div>
+        {% comment %} check if the signed up profile is not the same as the profile it is currently viewing {% endcomment %}
+        {% if  profile_user.username != user.username %}
+
+            {% comment %} check if the signed in user follows the current profile {% endcomment %}
+            {% if user.id in followers%}
+                <button class="btn btn-primary" id="Unfollow" onclick="location.href='{% url 'remove_follower' profile_user.id %}'">UnFollow</button>  
+
+                
+            {% else %}
+                <button class="btn btn-primary" id="follow" onclick="location.href='{% url 'add_follower' profile_user.id %}'">Follow</button>
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}  
+
+            {% endif %}
+        {% endif %}
+        </div>
+        <br>
+    </div>
+    <br>
+            
+
+    {% for post in page_obj %}
+        
+        <div class="container rounded-xl transition ease-in-out delay-150 bg-black hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 " data-data = "{{ post.id }}" id="object">
+            <hr>
+            <br>  
+            <div class="row">
+                <div class="col-6">
+                    <h5 class="text-xl font-bold"><a href="{% url 'profile' post.creator.id %}">{{ post.creator }}</a></h5>
+                </div>
+                <div class="col-6">
+                    <h6 class="text-xl font-bold">{{ post.timestamp }}</h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p id="content{{ post.id }}">{{ post.content }}</p>
+                </div>
+            </div>
+
+            
+                {% if post.creator.id == user.id %}
+
+                    <form style="display:none" id="edit_post_form{{ post.id }}" method="post", action= {% url 'edit_post' post.id %}>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <textarea class="form-control " id="edit_post_text" name="edit_post_text">{{ post.content }}</textarea>
+                            </div>   
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-6">
+                                    <button class="bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" type="submit" id="submit_edit_post">
+                                        Submit
+                                    </button>
+                            </div>
+                            <div class="col-6">
+                                    <button class="cancel_edit_post bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}" >
+                                        Cancel
+                                    </button>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            
+
+            <br>
+
+            <div class="row" id="buttonsLCE{{ post.id }}">
+                {% if user in post.likes.all %}
+                <div class="col-4">
+                    <button class="like_post  hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}" id="like_post{{ post.id }}">
+                        &#10084;
+                    </button>
+                </div>
+
+                {% else %}
+                <div class="col-4">
+                    <button class="like_post hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}"id="like_post{{ post.id }}">
+                        &#9825;
+                    </button>
+                </div>
+                {% endif %}
+                
+                
+                <div class="col-4">
+                    <button class=" bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" id="comment_post">
+                        Comment
+                    </button>
+                </div>
+
+                {% if post.creator.id == user.id %}
+                <div class="col-4">
+                        <button class="edit_post bg-blue-500 hover:bg-black text-blue-800 font-semibold py-2 px-4 border border-blue-900 rounded shadow" data-data = "{{ post.id }}">
+                            Edit
+                        </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <br>
+            <hr>   
+        </div>
+        <br>
+        
+        {% endfor %}
+    
+    <script src="{% static 'network/edit.js' %}"></script>
+{% endblock %}

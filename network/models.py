@@ -3,6 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
+    user_followers = models.ManyToManyField("self", blank=True, related_name="followers", symmetrical=False)
+    user_following = models.ManyToManyField("self", blank=True, related_name="following", symmetrical=False)
     pass
 
 class Comment(models.Model):
@@ -17,10 +19,4 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, blank=True, related_name="liked_posts")
     comments = models.ManyToManyField(Comment, blank=True, related_name="commented_posts")
 
-class follower(models.Model):
-    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower")
-    timestamp = models.DateTimeField(auto_now_add=True)
 
-class following(models.Model):
-    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
-    timestamp = models.DateTimeField(auto_now_add=True)
